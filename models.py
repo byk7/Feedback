@@ -1,7 +1,7 @@
 """Models for flask-feedback."""
 
 from flask_sqlalchemy import SQLAlchemy
-from flask_bcrypt import Bcrypt 
+from flask_bcrypt import Bcrypt, generate_password_hash, check_password_hash
 
 bcrypt = Bcrypt()
 db = SQLAlchemy()
@@ -9,7 +9,7 @@ db = SQLAlchemy()
 def connect_db(app): 
     """Connect this database to Flask app."""
 
-    db. app = app
+    db.app = app
     db.init_app(app)
 
 
@@ -34,33 +34,33 @@ class User(db.Model):
 
 
     @classmethod 
-    def register(cls, username, password, first_name, last_name, email)
-    """Register a user with hashed password & return user."""
+    def register(cls, username, password, first_name, last_name, email):
+        """Register a user with hashed password & return user."""
 
-    hashed = bcrypt.generate_password_hash(password)
-    hashed_utf8 = hashed.decode("utf8")
-    user = cls(
-        username=username,
-        password=hashed_utf8,
-        first_name=first_name,
-        last_name=last_name,
-        email=email
-    )
-    db.session.add(user)
-    return user 
+        hashed = bcrypt.generate_password_hash(password)
+        hashed_utf8 = hashed.decode("utf8")
+        user = cls(
+            username=username,
+            password=hashed_utf8,
+            first_name=first_name,
+            last_name=last_name,
+            email=email
+        )
+        db.session.add(user)
+        return user 
 
 
     @classmethod 
-    def authenticate(cls, username, password)
-    """Validate that user exists & password is correct.
-    Return user of valid; else return false."""
+    def authenticate(cls, username, password):
+        """Validate that user exists & password is correct.
+        Return user of valid; else return false."""
 
-    user = User.query.filter_by(username=username).first()
+        user = User.query.filter_by(username=username).first()
 
-    if user and bcrypt.check_password_hash(user.password, password):
-        return user 
-    else:
-        return False 
+        if user and bcrypt.check_password_hash(user.password, password):
+            return user 
+        else:
+            return False 
 
 
 
